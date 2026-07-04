@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ediciones Fractura Expuesta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Libre+Franklin:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  /* ============ TOKENS ============ */
+  :root{
+    --ink:        #15120e;
+    --ink-2:      #1b1712;
+    --ink-3:      #211c15;
+    --bone:       #ece6d6;
+    --bone-dim:   #b6ad98;
+    --bone-faint: #8a8272;
+    --line:       rgba(236,230,214,0.14);
+    --line-soft:  rgba(236,230,214,0.07);
+    --wine:       #5a121c;
+    --wine-bright:#8a2333;
+
+    --display: 'Bodoni Moda', 'Times New Roman', serif;
+    --body:    'Libre Franklin', -apple-system, sans-serif;
+
+    --measure: 640px;
+    --edge: clamp(24px, 6vw, 96px);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--ink);
+    color:var(--bone);
+    font-family:var(--body);
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--wine); color:var(--bone); }
+
+  a{ color:inherit; text-decoration:none; }
+
+  /* film grain, fixed over everything, barely there */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    z-index:200;
+    pointer-events:none;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* subtle vignette so edges recede */
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    z-index:199;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,0.55) 100%);
+  }
+
+  :focus-visible{
+    outline:1px solid var(--wine-bright);
+    outline-offset:4px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* ============ NAV ============ */
+  header.site-nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:28px var(--edge);
+    opacity:0;
+    transform:translateY(-8px);
+    animation:navIn 1.4s ease forwards;
+    animation-delay:3.4s;
+    mix-blend-mode:normal;
+  }
+
+  @keyframes navIn{ to{ opacity:1; transform:translateY(0); } }
+
+  .site-nav .mark{
+    font-family:var(--display);
+    font-size:0.92rem;
+    letter-spacing:0.04em;
+    color:var(--bone-dim);
+  }
+
+  .site-nav nav ul{
+    list-style:none;
+    display:flex;
+    gap:clamp(18px, 3vw, 40px);
+  }
+
+  .site-nav nav a{
+    font-size:0.68rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--bone-dim);
+    font-weight:500;
+    position:relative;
+    padding-bottom:4px;
+  }
+
+  .site-nav nav a::after{
+    content:"";
+    position:absolute;
+    left:0; bottom:0;
+    width:0%;
+    height:1px;
+    background:var(--bone-dim);
+    transition:width 0.6s ease;
+  }
+
+  .site-nav nav a:hover::after,
+  .site-nav nav a:focus-visible::after{ width:100%; }
+
+  @media (max-width:640px){
+    .site-nav{ flex-direction:column; align-items:flex-start; gap:16px; padding:20px var(--edge); }
+    .site-nav nav ul{ gap:16px; flex-wrap:wrap; }
+  }
+
+  /* ============ HERO ============ */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:0 var(--edge);
+    position:relative;
+  }
+
+  .hero .wordmark{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:clamp(2.4rem, 7vw, 5.6rem);
+    letter-spacing:0.01em;
+    line-height:1.05;
+    opacity:0;
+    filter:blur(2px);
+    animation:markIn 2.2s ease forwards;
+    animation-delay:0.7s;
+  }
+
+  @keyframes markIn{
+    to{ opacity:1; filter:blur(0); }
+  }
+
+  .hero .tagline{
+    margin-top:26px;
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(1rem, 1.6vw, 1.25rem);
+    color:var(--bone-dim);
+    letter-spacing:0.02em;
+    opacity:0;
+    animation:tagIn 1.6s ease forwards;
+    animation-delay:2.1s;
+  }
+
+  @keyframes tagIn{ to{ opacity:1; } }
+
+  .hero .scroll-cue{
+    position:absolute;
+    bottom:48px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:0.62rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+    opacity:0;
+    animation:cueIn 1.5s ease forwards, cuePulse 3.5s ease-in-out infinite;
+    animation-delay:3.8s, 3.8s;
+  }
+
+  @keyframes cueIn{ to{ opacity:0.55; } }
+  @keyframes cuePulse{ 0%,100%{ opacity:0.25; } 50%{ opacity:0.6; } }
+
+  /* ============ CARTA ============ */
+  .carta{
+    position:relative;
+    padding:8vh var(--edge) 14vh;
+  }
+
+  .carta .section-eyebrow{
+    text-align:center;
+    font-size:0.66rem;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+    margin-bottom:14vh;
+  }
+
+  .carta .timecode{
+    position:fixed;
+    top:50%;
+    right:var(--edge);
+    transform:translateY(-50%);
+    z-index:50;
+    font-size:0.66rem;
+    letter-spacing:0.14em;
+    color:var(--bone-faint);
+    font-variant-numeric:tabular-nums;
+    writing-mode:vertical-rl;
+    opacity:0;
+    transition:opacity 0.6s ease;
+    pointer-events:none;
+  }
+
+  .carta.is-visible .timecode{ opacity:0.6; }
+
+  @media (max-width:800px){ .carta .timecode{ display:none; } }
+
+  .carta-para{
+    min-height:60vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .carta-para p{
+    max-width:var(--measure);
+    font-size:clamp(1.05rem, 2vw, 1.3rem);
+    line-height:1.85;
+    font-weight:300;
+    color:var(--bone-faint);
+    opacity:0.28;
+    transform:translateY(14px);
+    transition:opacity 1.1s ease, transform 1.1s ease, color 1.1s ease;
+  }
+
+  .carta-para.is-active p{
+    opacity:1;
+    transform:translateY(0);
+    color:var(--bone);
+  }
+
+  .carta-para .accent{
+    color:var(--wine-bright);
+    font-style:italic;
+    font-family:var(--display);
+  }
+
+  .carta-para .signoff{
+    display:block;
+    margin-top:28px;
+    font-family:var(--display);
+    font-style:italic;
+    font-size:0.95rem;
+    color:var(--bone-dim);
+  }
+
+  /* ============ DIVIDER ============ */
+  .divider{
+    max-width:120px;
+    margin:0 auto;
+    height:1px;
+    background:var(--line);
+  }
+
+  /* ============ CATALOGO ============ */
+  .catalogo{
+    padding:16vh 0 16vh;
+  }
+
+  .catalogo .section-head{
+    padding:0 var(--edge);
+    margin-bottom:8vh;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    max-width:1400px;
+    margin-left:auto; margin-right:auto;
+  }
+
+  .catalogo h2{
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(1.6rem, 3.5vw, 2.4rem);
+    letter-spacing:0.01em;
+  }
+
+  .catalogo .section-note{
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+  }
+
+  .shelf{
+    display:flex;
+    gap:clamp(20px, 3vw, 44px);
+    overflow-x:auto;
+    padding:2vh var(--edge) 4vh;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+  }
+  .shelf::-webkit-scrollbar{ display:none; }
+
+  .book{
+    flex:0 0 auto;
+    width:clamp(160px, 20vw, 210px);
+    scroll-snap-align:start;
+  }
+
+  .book .cover{
+    width:100%;
+    aspect-ratio:2/3;
+    position:relative;
+    border:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    text-align:center;
+    overflow:hidden;
+    transition:border-color 0.5s ease;
+  }
+
+  .book .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    opacity:0.9;
+  }
+
+  .book:nth-child(1) .cover::before{ background:linear-gradient(155deg, #2a241b, #100d09 70%); }
+  .book:nth-child(2) .cover::before{ background:linear-gradient(200deg, #241f18, #0e0b08 65%); }
+  .book:nth-child(3) .cover::before{ background:linear-gradient(120deg, #221d16, #120f0a 75%); }
+  .book:nth-child(4) .cover::before{ background:linear-gradient(170deg, #1e1a14, #0b0907 60%); }
+
+  .book .cover .title{
+    position:relative;
+    font-family:var(--display);
+    font-size:1.02rem;
+    line-height:1.35;
+    letter-spacing:0.01em;
+    color:var(--bone-dim);
+    transition:color 0.5s ease;
+  }
+
+  .book .cover .mark-small{
+    position:absolute;
+    bottom:16px; left:0; right:0;
+    text-align:center;
+    font-size:0.58rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+    opacity:0;
+    transition:opacity 0.5s ease;
+  }
+
+  .book:hover .cover,
+  .book:focus-within .cover{ border-color:var(--wine-bright); }
+  .book:hover .cover .title,
+  .book:focus-within .cover .title{ color:var(--bone); }
+  .book:hover .cover .mark-small,
+  .book:focus-within .cover .mark-small{ opacity:0.6; }
+
+  .book .meta{
+    margin-top:14px;
+    font-size:0.72rem;
+    letter-spacing:0.03em;
+    color:var(--bone-faint);
+  }
+
+  .book .meta em{
+    font-style:italic;
+    font-family:var(--display);
+    color:var(--bone-dim);
+    display:block;
+    margin-top:2px;
+    font-size:0.8rem;
+  }
+
+  /* ============ CASA ============ */
+  .casa{
+    padding:16vh var(--edge);
+    display:grid;
+    grid-template-columns:0.8fr 1.2fr;
+    gap:6vw;
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  @media (max-width:800px){
+    .casa{ grid-template-columns:1fr; gap:6vh; }
+  }
+
+  .casa h2{
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(1.6rem, 3.5vw, 2.4rem);
+  }
+
+  .casa .facts{
+    margin-top:36px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .casa .facts dt{
+    font-size:0.62rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+  }
+
+  .casa .facts dd{
+    font-family:var(--display);
+    font-size:1rem;
+    color:var(--bone-dim);
+    margin-top:4px;
+  }
+
+  .casa .copy p{
+    max-width:56ch;
+    font-size:1.02rem;
+    line-height:1.85;
+    color:var(--bone-dim);
+    margin-bottom:1.6em;
+    font-weight:300;
+  }
+
+  .casa .copy p:last-child{ margin-bottom:0; }
+
+  /* ============ CONTACTO / CLOSING ============ */
+  .contacto{
+    padding:18vh var(--edge) 10vh;
+    text-align:center;
+  }
+
+  .contacto h2{
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(1.6rem, 3.5vw, 2.2rem);
+    margin-bottom:40px;
+  }
+
+  .contacto .channels{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    max-width:360px;
+    margin:0 auto;
+  }
+
+  .contacto .channels .row{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid var(--line-soft);
+    padding-bottom:14px;
+  }
+
+  .contacto .channels .row span:first-child{
+    font-size:0.66rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+  }
+
+  .contacto .channels a{
+    font-size:0.9rem;
+    color:var(--bone-dim);
+    border-bottom:1px solid transparent;
+    transition:color 0.4s ease, border-color 0.4s ease;
+  }
+
+  .contacto .channels a:hover,
+  .contacto .channels a:focus-visible{
+    color:var(--bone);
+    border-color:var(--bone-dim);
+  }
+
+  footer.colophon{
+    padding:10vh var(--edge) 6vh;
+    text-align:center;
+  }
+
+  footer.colophon .mark{
+    font-family:var(--display);
+    font-size:1.1rem;
+    letter-spacing:0.03em;
+    color:var(--bone-dim);
+  }
+
+  footer.colophon .place{
+    margin-top:10px;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--bone-faint);
+  }
+
+</style>
+</head>
+<body>
+
+  <header class="site-nav">
+    <span class="mark">E.F.E.</span>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="#casa">Casa</a></li>
+        <li><a href="#carta">Carta de intenciones</a></li>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <h1 class="wordmark">Ediciones<br>Fractura&nbsp;Expuesta</h1>
+    <p class="tagline">Nunca es el arma</p>
+    <span class="scroll-cue">Desplazar</span>
+  </section>
+
+  <!-- ============ CARTA ============ -->
+  <section class="carta" id="carta">
+    <p class="section-eyebrow">Carta de intenciones</p>
+    <span class="timecode" data-timecode>01 / 08</span>
+
+    <div class="carta-para" data-para>
+      <p>No nací con vocación de multitud.</p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>Nací en Río Gallegos, en el borde exacto donde el mapa deja de tomarse en serio a sí mismo, y ahí aprendí temprano lo único que después no dejé de confirmar: el centro no es un lugar, es una decisión. Los que esperan que el centro venga a buscarlos, esperan sentados toda la vida.</p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>Creo tres cosas, con la incomodidad de saber que hoy cuestan caro decirlas en voz alta.</p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>Creo que el dinero se hace con genialidad, no con consenso. Que la riqueza real —la que no se devalúa con el humor del mercado— nace de ver algo que los demás todavía no vieron, y tener el estómago para apostarle antes de que sea obvio.</p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>Creo en la grandeza del espíritu humano, que no es una frase de almanaque sino una apuesta concreta: que hay personas capaces de más de lo que el promedio les permite imaginarse, y que negarles esa posibilidad en nombre de la prudencia colectiva es la forma más elegante de la mediocridad.</p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>Y creo en el uno por sobre los muchos. No por desprecio a los muchos —los muchos son, casi siempre, la razón por la que vale la pena escribir algo—, sino porque toda idea que valió la pena nació en la cabeza de alguien que estaba, en ese momento, completamente solo con ella.</p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>De ahí la frase que llevo conmigo desde hace más tiempo del que puedo justificar con lógica: cien mil hombres armados nada pueden hacer contra un hombre con una ametralladora. Y cien mil hombres armados con ametralladoras nada pueden hacer contra un hombre que entiende que las ametralladoras no son lo importante. <span class="accent">No busco el arma más grande. Busco al que entendió, antes que el resto, que el arma nunca fue el punto.</span></p>
+    </div>
+
+    <div class="carta-para" data-para>
+      <p>Esta editorial no existe para vender libros. Existe porque cada tanto aparece alguien que entendió algo antes que los demás, y ese alguien necesita un lugar donde esa comprensión no se diluya en el consenso de una sala de edición que le tiene miedo a sonar distinta.<span class="signoff">Ese lugar es este. — Mario Abbate</span></p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============ CATALOGO ============ -->
+  <section class="catalogo" id="catalogo">
+    <div class="section-head">
+      <h2>Catálogo</h2>
+      <span class="section-note">Cuatro títulos</span>
+    </div>
+
+    <div class="shelf">
+      <div class="book">
+        <a href="#" tabindex="0">
+          <div class="cover">
+            <span class="title">El<br>Hundimiento</span>
+            <span class="mark-small">E.F.E.</span>
+          </div>
+        </a>
+        <p class="meta">Novela<br><em>Volumen I</em></p>
+      </div>
+
+      <div class="book">
+        <a href="#" tabindex="0">
+          <div class="cover">
+            <span class="title">Réquiem<br>de una<br>Nación</span>
+            <span class="mark-small">E.F.E.</span>
+          </div>
+        </a>
+        <p class="meta">Libro coral<br><em>Varios autores</em></p>
+      </div>
+
+      <div class="book">
+        <a href="#" tabindex="0">
+          <div class="cover">
+            <span class="title">Fractura<br>Soberana</span>
+            <span class="mark-small">E.F.E.</span>
+          </div>
+        </a>
+        <p class="meta">Ensayo<br><em>Manual de marca personal</em></p>
+      </div>
+
+      <div class="book">
+        <a href="#" tabindex="0">
+          <div class="cover">
+            <span class="title">El<br>Confín</span>
+            <span class="mark-small">Próxima publicación</span>
+          </div>
+        </a>
+        <p class="meta">Crónica<br><em>Hernán Bahamonde</em></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============ CASA ============ -->
+  <section class="casa" id="casa">
+    <div>
+      <h2>Casa</h2>
+      <dl class="facts">
+        <div>
+          <dt>Sede</dt>
+          <dd>Río Gallegos, Santa Cruz</dd>
+        </div>
+        <div>
+          <dt>Fundación</dt>
+          <dd>2026</dd>
+        </div>
+        <div>
+          <dt>Editor</dt>
+          <dd>Mario Abbate</dd>
+        </div>
+      </dl>
+    </div>
+    <div class="copy">
+      <p>Ediciones Fractura Expuesta publica poco y elige mucho. No sostenemos un catálogo por volumen, sino por criterio: entra lo que ya entendió algo que el resto todavía no vio, y lo dice sin pedir permiso.</p>
+      <p>No publicamos por calendario ni por cuota. Cada título entra al catálogo porque sostiene, a su manera, la misma pregunta: qué es lo que de verdad importa cuando todo lo demás —el ruido, la urgencia, el consenso— se saca del medio.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============ CONTACTO ============ -->
+  <section class="contacto" id="contacto">
+    <h2>Contacto</h2>
+    <div class="channels">
+      <div class="row">
+        <span>Prensa</span>
+        <a href="mailto:prensa@fracturaexpuesta.com">prensa@fracturaexpuesta.com</a>
+      </div>
+      <div class="row">
+        <span>Derechos</span>
+        <a href="mailto:derechos@fracturaexpuesta.com">derechos@fracturaexpuesta.com</a>
+      </div>
+      <div class="row">
+        <span>Propuestas</span>
+        <a href="mailto:editor@fracturaexpuesta.com">editor@fracturaexpuesta.com</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <p class="mark">Ediciones Fractura Expuesta</p>
+    <p class="place">Río Gallegos, Santa Cruz — Argentina</p>
+  </footer>
+
+  <script>
+    // Reveal paragraphs of the carta as they cross the viewport center,
+    // dim the previous one instead of hiding it, and keep a timecode in sync.
+    (function(){
+      var paras = Array.prototype.slice.call(document.querySelectorAll('[data-para]'));
+      var timecode = document.querySelector('[data-timecode]');
+      var cartaSection = document.querySelector('.carta');
+      if(!paras.length) return;
+
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-active');
+            var idx = paras.indexOf(entry.target) + 1;
+            if(timecode){
+              timecode.textContent = String(idx).padStart(2,'0') + ' / ' + String(paras.length).padStart(2,'0');
+            }
+          }
+        });
+      }, { threshold:0.5 });
+
+      paras.forEach(function(p){ io.observe(p); });
+
+      var visIo = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          cartaSection.classList.toggle('is-visible', entry.isIntersecting);
+        });
+      }, { threshold:0.05 });
+      visIo.observe(cartaSection);
+    })();
+  </script>
+
+</body>
+</html>
